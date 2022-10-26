@@ -1,17 +1,13 @@
-#include <iostream>
-#include <string>
 #include "my_string.h"
-using namespace std;
-#define MS MyString
 
-//Дефотный конструктор с пустой строкой и нулевыми size и capacity
+//Default constructor
 MS::MyString() {
 	myStrSize = 0;
 	myStrCapacity = 0;
 	myString = nullptr;
 }
 
-//Принимает на вход строку
+//Char array constructor
 MS::MyString(const char String[]) {
 	size_t size = 0;
 	for (;; size++)
@@ -32,8 +28,7 @@ MS::MyString(const char String[]) {
 	this->myString[size] = '\0';
 }
 
-//Принимает на вход "список" из символов
-//Почему-то плохо передаются параметры. Часто считывает лишнюю "М" в конце
+//Initializer list constructor
 MS::MyString(const char chr, ...) {
 	char chrr = chr, chrcp = chr;
 	va_list chars, charsCopy;
@@ -41,9 +36,11 @@ MS::MyString(const char chr, ...) {
 	va_copy(charsCopy, chars);
 
 	size_t size = 0;
-	while (chrr != '\0' && chrr) {
+	char* nxt = (char*)(chars + 1);
+	while (chrr != '\0' && nxt[0] == '\0') {
 		size++;
-		chrr = va_arg(chars, char);
+		nxt = (char*)(chars + 1);
+		chrr = va_arg(chars, char);		
 	}
 	va_end(chars);
 
@@ -64,7 +61,7 @@ MS::MyString(const char chr, ...) {
 	va_end(charsCopy);
 }
 
-//Принимает на вход string
+//std::string constructor
 MS::MyString(string stroka) {
 	size_t size = stroka.size();
 	size_t capacity = stroka.capacity();
@@ -76,6 +73,7 @@ MS::MyString(string stroka) {
 		this->myString[i] = stroka[i];
 }
 
+//Init class with count characters of “char string”
 MS::MyString(const char String[], size_t count) {
 	this->myStrSize = count;
 	this->myString = new char[count + 1];
@@ -91,6 +89,7 @@ MS::MyString(const char String[], size_t count) {
 	this->myString[count] = '\0';
 }
 
+//Init class with count of characters
 MS::MyString(size_t count, const char sim) {
 	this->myStrSize = count;
 	this->myString = new char[count + 1];
@@ -106,9 +105,13 @@ MS::MyString(size_t count, const char sim) {
 	this->myString[count] = '\0';
 }
 
+//Copy constructor
 MS::MyString(const MyString& other) {
 	this->myStrSize = other.myStrSize;
 	this->myStrCapacity = other.myStrCapacity;
+
+	size_t *adr = &(this->myStrSize);
+	size_t* adr2 = &(this->myStrCapacity);
 
 	this->myString = new char[other.myStrSize + 1];
 	size_t cp = sizeof(this->myString);
@@ -117,12 +120,17 @@ MS::MyString(const MyString& other) {
 	this->myString[other.myStrSize] = '\0';
 }
 
-//Возвращает размер строки
+//Destructor
+MS::~MyString(void) {
+	delete[] this->myString;
+}
+
+//Return the number of char elements in string
 size_t MS::size() {
 	return this->myStrSize;
 }
 
-//Возвращает количество выделенной памяти для строки
+//Return the current amount of allocated memory for array
 size_t MS::capacity() {
 	return this->myStrCapacity;
 }
@@ -136,7 +144,7 @@ void MS::Print() {
 
 int main() {
 	setlocale(LC_ALL, "ru");
-	MyString a1("Hello world!");
+	MyString a1({'h','e','l','l'});
 	MyString a2(a1);
 	a1.Print();
 	cout<< " " << a1.size() << " " << a1.capacity() << " " << a2.capacity();

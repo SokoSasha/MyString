@@ -3,8 +3,11 @@
 
 #define _MYSTRING_H_
 #include <iostream>
+#include <string>
 #include <cstdarg>
 using namespace std;
+
+#define MS MyString
 
 class MyString {
 public:
@@ -15,6 +18,7 @@ public:
 	MyString(const char String[], size_t count);
 	MyString(size_t count, const char sim);
 	MyString(const MyString& other);
+	~MyString(void);
 	size_t size();
 	size_t capacity();
 	void Print();
@@ -23,4 +27,4 @@ private:
 	char* myString;
 };
 
-#endif // _COMMON_H_
+#endif // _MYSTRING_H_
