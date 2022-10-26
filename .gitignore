@@ -6,4 +6,4 @@ MyString.vcxproj.user
 MyString.vcxproj.filters
 MyString.vcxproj
 MyString.sln
-/x64
+\x64

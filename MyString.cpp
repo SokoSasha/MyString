@@ -14,14 +14,8 @@ MS::MyString(const char String[]) {
 		if (String[size] == '\0') break;
 
 	this->myStrSize = size;
-
+	this->myStrCapacity = this->myStrSize + 4;
 	this->myString = new char[size + 1];
-
-	size_t capacity = 0;
-	for (;; capacity++)
-		if (myString[capacity] == '\0') break;
-
-	this->myStrCapacity = capacity;
 
 	for (size_t i = 0; i < size; i++)
 		this->myString[i] = String[i];
@@ -29,36 +23,15 @@ MS::MyString(const char String[]) {
 }
 
 //Initializer list constructor
-MS::MyString(const char chr, ...) {
-	char chrr = chr, chrcp = chr;
-	va_list chars, charsCopy;
-	va_start(chars, chr);
-	va_copy(charsCopy, chars);
-
-	size_t size = 0;
-	char* nxt = (char*)(chars + 1);
-	while (chrr != '\0' && nxt[0] == '\0') {
-		size++;
-		nxt = (char*)(chars + 1);
-		chrr = va_arg(chars, char);		
-	}
-	va_end(chars);
-
-	this->myString = new char[size + 1];
-
-	size_t capacity = 0;
-	for (;; capacity++)
-		if (myString[capacity] == '\0') break;
-
-	this->myStrCapacity = capacity;
-	this->myStrSize = size;
-
-	for (size_t i = 0; i < size; i++) {
-		this->myString[i] = chrcp;
-		chrcp = va_arg(charsCopy, char);
-	}
-	this->myString[size] = '\0';
-	va_end(charsCopy);
+MS::MyString(initializer_list<char> chars) {
+	this->myStrSize = chars.size();
+	this->myStrCapacity = this->myStrSize + 4;
+	this->myString = new char[chars.size() + 1];
+	
+	size_t i = 0;
+	for (auto chr : chars)
+		this->myString[i++] = chr;
+	this->myString[i] = '\0';
 }
 
 //std::string constructor
@@ -76,13 +49,8 @@ MS::MyString(string stroka) {
 //Init class with count characters of “char string”
 MS::MyString(const char String[], size_t count) {
 	this->myStrSize = count;
+	this->myStrCapacity = this->myStrSize + 4;
 	this->myString = new char[count + 1];
-
-	size_t capacity = 0;
-	for (;; capacity++)
-		if (myString[capacity] == '\0') break;
-
-	this->myStrCapacity = capacity;
 
 	for (size_t i = 0; i < count; i++)
 		this->myString[i] = String[i];
@@ -92,13 +60,8 @@ MS::MyString(const char String[], size_t count) {
 //Init class with count of characters
 MS::MyString(size_t count, const char sim) {
 	this->myStrSize = count;
+	this->myStrCapacity = this->myStrSize + 4;
 	this->myString = new char[count + 1];
-
-	size_t capacity = 0;
-	for (;; capacity++)
-		if (myString[capacity] == '\0') break;
-
-	this->myStrCapacity = capacity;
 
 	for (size_t i = 0; i < count; i++)
 		this->myString[i] = sim;
@@ -110,9 +73,6 @@ MS::MyString(const MyString& other) {
 	this->myStrSize = other.myStrSize;
 	this->myStrCapacity = other.myStrCapacity;
 
-	size_t *adr = &(this->myStrSize);
-	size_t* adr2 = &(this->myStrCapacity);
-
 	this->myString = new char[other.myStrSize + 1];
 	size_t cp = sizeof(this->myString);
 	for (size_t i = 0; i < other.myStrSize; i++)
@@ -123,6 +83,36 @@ MS::MyString(const MyString& other) {
 //Destructor
 MS::~MyString(void) {
 	delete[] this->myString;
+}
+
+//Concatenate with Mystring
+MyString MS::operator +(const MyString& other) {
+	MyString temp;
+	temp.myStrSize = this->myStrSize + other.myStrSize;
+	temp.myStrCapacity = temp.myStrSize + 4;
+	temp.myString = new char[temp.myStrSize + 1];
+
+	size_t i = 0;
+	for (size_t k = 0; k < this->myStrSize; k++)
+		temp.myString[i++] = this->myString[k];
+
+	for (size_t k = 0; k < other.myStrSize; k++)
+		temp.myString[i++] = other.myString[k];
+
+	temp.myString[i] = '\0';
+
+	return temp;
+}
+
+//MyString assignment
+MyString MS::operator =(const MyString& other) {
+	this->myStrSize = other.myStrSize;
+	this->myStrCapacity = other.myStrCapacity;
+	this->myString = new char[this->myStrSize];
+	for (size_t i = 0; i < this->myStrSize; i++)
+		this->myString[i] = other.myString[i];
+
+	return *this;
 }
 
 //Return the number of char elements in string
@@ -144,9 +134,10 @@ void MS::Print() {
 
 int main() {
 	setlocale(LC_ALL, "ru");
-	MyString a1({'h','e','l','l'});
-	MyString a2(a1);
-	a1.Print();
-	cout<< " " << a1.size() << " " << a1.capacity() << " " << a2.capacity();
+	MyString a2("world"), a3;
+	MyString a1({ 'h','e','l','l','o',' ' });
+	a3 = a1 + a2;
+	a3.Print();
+	cout<< " " << a3.size() << " " << a3.capacity();
 	return 0;
 }
