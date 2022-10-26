@@ -60,6 +60,7 @@ MS::MyString(const char chr, ...) {
 		this->myString[i] = chrcp;
 		chrcp = va_arg(charsCopy, char);
 	}
+	this->myString[size] = '\0';
 	va_end(charsCopy);
 }
 
@@ -71,8 +72,49 @@ MS::MyString(string stroka) {
 	this->myStrCapacity = capacity;
 	this->myString = new char[capacity];
 
-	for (int i = 0; i < capacity; i++)
+	for (int i = 0; i < size; i++)
 		this->myString[i] = stroka[i];
+}
+
+MS::MyString(const char String[], size_t count) {
+	this->myStrSize = count;
+	this->myString = new char[count + 1];
+
+	size_t capacity = 0;
+	for (;; capacity++)
+		if (myString[capacity] == '\0') break;
+
+	this->myStrCapacity = capacity;
+
+	for (size_t i = 0; i < count; i++)
+		this->myString[i] = String[i];
+	this->myString[count] = '\0';
+}
+
+MS::MyString(size_t count, const char sim) {
+	this->myStrSize = count;
+	this->myString = new char[count + 1];
+
+	size_t capacity = 0;
+	for (;; capacity++)
+		if (myString[capacity] == '\0') break;
+
+	this->myStrCapacity = capacity;
+
+	for (size_t i = 0; i < count; i++)
+		this->myString[i] = sim;
+	this->myString[count] = '\0';
+}
+
+MS::MyString(const MyString& other) {
+	this->myStrSize = other.myStrSize;
+	this->myStrCapacity = other.myStrCapacity;
+
+	this->myString = new char[other.myStrSize + 1];
+	size_t cp = sizeof(this->myString);
+	for (size_t i = 0; i < other.myStrSize; i++)
+		this->myString[i] = other.myString[i];
+	this->myString[other.myStrSize] = '\0';
 }
 
 //Возвращает размер строки
@@ -94,9 +136,9 @@ void MS::Print() {
 
 int main() {
 	setlocale(LC_ALL, "ru");
-	string s = "hello";
-	MyString a1(s);
+	MyString a1("Hello world!");
+	MyString a2(a1);
 	a1.Print();
-	cout<< " " << a1.size() << " " << a1.capacity();
+	cout<< " " << a1.size() << " " << a1.capacity() << " " << a2.capacity();
 	return 0;
 }
