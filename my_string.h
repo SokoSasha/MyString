@@ -11,11 +11,12 @@ public:
 	MyString();
 	MyString(const char string[]);
 	MyString(const char chr, ...);
-	int size();
-	int capacity();
+	MyString(string stroka);
+	size_t size();
+	size_t capacity();
 	void Print();
 private:
-	int myStrSize, myStrCapacity;
+	size_t myStrSize, myStrCapacity;
 	char* myString;
 };
 
