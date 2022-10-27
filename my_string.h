@@ -15,14 +15,17 @@ public:
 	MyString();
 	MyString(const char String[]);
 	MyString(initializer_list<char> chars);
-	MyString(string stroka);
+	MyString(const string stroka);
 	MyString(const char String[], size_t count);
 	MyString(size_t count, const char sim);
 	MyString(const MyString& other);
 	~MyString(void);
 
-	MyString operator +(const MyString &other);
 	MyString operator =(const MyString& other);
+	MyString operator +(const MyString &other);
+	MyString operator +(const char String[]);
+	MyString operator +(const string stroka);
+	MyString operator +=(const char String[]);
 
 	size_t size();
 	size_t capacity();
