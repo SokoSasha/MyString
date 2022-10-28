@@ -22,13 +22,36 @@ public:
 	~MyString(void);
 
 	MyString operator =(const MyString& other);
+	MyString operator =(const char String[]);
+	MyString operator =(const string stroka);
+	MyString operator =(const char chr);
+
 	MyString operator +(const MyString &other);
 	MyString operator +(const char String[]);
 	MyString operator +(const string stroka);
-	MyString operator +=(const char String[]);
 
-	size_t size();
-	size_t capacity();
+	MyString operator +=(const char String[]);
+	MyString operator +=(const string stroka);
+
+	char operator [](int id);
+
+	bool operator >(MyString& other);
+	bool operator <(MyString& other);
+	bool operator >=(MyString& other);
+	bool operator <=(MyString& other);
+	bool operator !=(MyString& other);
+	bool operator ==(MyString& other);
+
+	const char* c_str(void);
+	const char* data(void);
+
+	size_t size(void);
+	size_t lenght(void);
+	bool empty(void);
+	size_t capacity(void);
+
+	MyString shrink_to_fit(void);
+
 	void Print();
 private:
 	size_t myStrSize, myStrCapacity;
