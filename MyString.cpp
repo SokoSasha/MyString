@@ -1,5 +1,11 @@
 #include "my_string.h"
 
+size_t charSize(const char String[]) {
+	size_t size = 0;
+	while (String[size++] != '\0');
+	return size - 1;
+}
+
 //Default constructor
 MS::MyString() {
 	myStrSize = 0;
@@ -9,10 +15,7 @@ MS::MyString() {
 
 //Char array constructor
 MS::MyString(const char String[]) {
-	size_t size = 0;
-	while (String[size++] != '\0');
-	size--;
-
+	size_t size = charSize(String);
 	this->myStrSize = size;
 	this->myStrCapacity = this->myStrSize + 5;
 	this->myString = new char[size + 1];
@@ -27,7 +30,7 @@ MS::MyString(initializer_list<char> chars) {
 	this->myStrSize = chars.size();
 	this->myStrCapacity = this->myStrSize + 5;
 	this->myString = new char[chars.size() + 1];
-	
+
 	size_t i = 0;
 	for (auto chr : chars)
 		this->myString[i++] = chr;
@@ -52,10 +55,9 @@ MS::MyString(const char String[], size_t count) {
 	this->myStrCapacity = this->myStrSize + 5;
 	this->myString = new char[count + 1];
 
-	size_t i = 0;
-	for (; i < count; i++)
+	for (size_t i = 0; i < count; i++)
 		this->myString[i] = String[i];
-	this->myString [i] = '\0';
+	this->myString[count] = '\0';
 }
 
 //Init class with count of characters
@@ -123,9 +125,7 @@ MyString MS::operator =(const MyString& other) {
 MyString MS::operator +(const char String[]) {
 	MyString temp;
 
-	size_t size = 0;
-	while (String[size++] != '\0');
-	size--;
+	size_t size = charSize(String);
 
 	temp.myStrSize = size + this->myStrSize;
 	temp.myStrCapacity = size + this->myStrCapacity;
@@ -163,9 +163,7 @@ MyString MS::operator +(const string stroka) {
 
 //Assignment concatenate with char array
 MyString MS::operator +=(const char String[]) {
-	size_t sizePlus = 0;
-	while (String[sizePlus++] != '\0');
-	sizePlus--;
+	size_t sizePlus = charSize(String);
 	size_t size = this->myStrSize + sizePlus;
 	char* temp = new char[size + 1];
 
@@ -179,10 +177,10 @@ MyString MS::operator +=(const char String[]) {
 	delete[] this->myString;
 	this->myString = temp;
 	this->myStrSize = size;
-	this->myStrCapacity = size +5;
+	this->myStrCapacity = size + 5;
 
 	return *this;
-	
+
 }
 
 //Assignment concatenate with std::string
@@ -211,9 +209,7 @@ MyString MS::operator +=(const string stroka) {
 MyString MS::operator =(const char String[]) {
 	delete[] this->myString;
 
-	size_t size = 0;
-	while (String[size++] != '\0');
-	size--;
+	size_t size = charSize(String);
 
 	this->myString = new char[size + 1];
 	for (size_t i = 0; i < size; i++)
@@ -255,12 +251,9 @@ MyString MS::operator =(const char chr) {
 }
 
 //Index operator
-char MS::operator [](int id) {
-	if (id <= this->myStrSize && id >=0) return this->myString[id];
-	else {
-		cout << "Out of array" << endl;
-		return '\0';
-	}
+char MS::operator [](size_t id) {
+	if (id <= this->myStrSize && id >= 0 && this->myStrSize > 0) return this->myString[id];
+	else throw "Out of range";
 }
 
 //Lexicographical comparing
@@ -366,23 +359,177 @@ size_t MS::capacity() {
 
 //Reduce the capacity to size
 MyString MS::shrink_to_fit() {
-	if (this->myStrSize + 1 != this->myStrCapacity) {
-		char* temp = new char[this->myStrSize];
+	if (this->myStrCapacity > this->myStrSize + 5) {
+		char* temp = new char[this->myStrSize + 1];
+		for (size_t i = 0; i <= this->myStrSize; i++)
+			temp[i] = this->myString[i];
+		delete[] this->myString;
+		this->myString = temp;
+		this->myStrCapacity = this->myStrSize + 5;
 	}
 	return *this;
 }
 
-//Выводит строку
-//Метод для проверки
-void MS::Print() {
-	for (int i = 0; i < this->myStrSize; i++)
-		cout << this->myString[i];
+//Remove all char element in string
+void MS::clear() {
+	for (size_t i = 0; i < this->myStrSize; i++)
+		this->myString[i] = '\0';
+	this->myStrSize = 0;
+}
+
+//
+ostream& operator <<(ostream& os, MyString& MyS) {
+	return os << MyS.myString;
+}
+
+//
+istream& operator >>(istream& in, MyString& MyS) {
+	if (!in) MyS = MyString();
+	else {
+		string str;
+		in >> str;
+		MyS = str;
+		MyS.shrink_to_fit();
+	}
+	return in;
+}
+
+//Insert count of char in index position
+MyString MS::insert(size_t id, size_t count, char chr) {
+	if (id > this->myStrSize + 1)
+		throw "Out of range";
+
+	char* temp = new char[this->myStrSize + count + 1];
+	for (size_t i = 0; i < id; i++)
+		temp[i] = this->myString[i];
+	for (size_t i = id; i < id + count; i++)
+		temp[i] = chr;
+	for (size_t i = id; i <= this->myStrSize; i++)
+		temp[i + count] = this->myString[i];
+
+	delete[] this->myString;
+	this->myString = temp;
+	this->myStrSize = this->myStrSize + count;
+	this->myStrCapacity = this->myStrSize + 5;
+	return *this;
+}
+
+//Insert null-terminated char string at index position
+MyString MS::insert(size_t id, const char String[]) {
+	if (id > this->myStrSize)
+		throw "Out of range";
+
+	size_t size = charSize(String);
+	char* temp = new char[this->myStrSize + size + 1];
+
+	size_t i = 0;
+	for (; i < id; i++)
+		temp[i] = this->myString[i];
+	for (size_t j = 0; i < size; i++, j++)
+		temp[i] = String[j];
+	for (size_t j = id; j <= this->myStrSize; i++, j++)
+		temp[i] = this->myString[j];
+
+	delete[] this->myString;
+	this->myString = temp;
+	this->myStrSize = this->myStrSize + size;
+	this->myStrCapacity = this->myStrSize + 5;
+
+	return *this;
+}
+
+//Insert count of null-terminated char string at index position
+MyString MS::insert(size_t id, const char String[], size_t count) {
+	if (id > this->myStrSize)
+		throw "Out of range";
+
+	size_t size = charSize(String);
+	if (count > size)
+		throw "Out of range";
+
+	size_t i = 0;
+	char* temp = new char[this->myStrSize + size * count + 1];
+	for (; i < id; i++)
+		temp[i] = this->myString[i];
+	for (size_t k = 0; k < count && k < size; i++, k++)
+		temp[i] = String[k];
+	for (size_t j = id; j <= this->myStrSize; i++, j++)
+		temp[i] = this->myString[j];
+
+	delete[] this->myString;
+	this->myString = temp;
+	this->myStrSize = this->myStrSize + count;
+	this->myStrCapacity = this->myStrSize + 5;
+
+	return *this;
+}
+
+//Insert std::string at index position
+MyString MS::insert(size_t id, string stroka) {
+	if (id > this->myStrSize)
+		throw "Out of range";
+
+	size_t size = stroka.size();
+
+	size_t i = 0;
+	char* temp = new char[this->myStrSize + size + 1];
+	for (; i < id; i++)
+		temp[i] = this->myString[i];
+	for (size_t j = 0; j < size; i++, j++)
+		temp[i] = stroka[j];
+	for (size_t j = id; j <= this->myStrSize; i++, j++)
+		temp[i] = this->myString[j];
+
+	delete[] this->myString;
+	this->myString = temp;
+	this->myStrSize = this->myStrSize + size;
+	this->myStrCapacity = this->myStrSize + 5;
+
+	return *this;
+}
+
+//Insert count of std::string at index position
+MyString MS::insert(size_t id, string stroka, size_t count) {
+	if (id > this->myStrSize)
+		throw "Out of range";
+
+	size_t size = stroka.size();
+	if (count > size)
+		throw "Out of range";
+
+	size_t i = 0;
+	char* temp = new char[this->myStrSize + size * count + 1];
+	for (; i < id; i++)
+		temp[i] = this->myString[i];
+	for (size_t k = 0; k < count && k < size; i++, k++)
+		temp[i] = stroka[k];
+	for (size_t j = id; j <= this->myStrSize; i++, j++)
+		temp[i] = this->myString[j];
+
+	delete[] this->myString;
+	this->myString = temp;
+	this->myStrSize = this->myStrSize + count;
+	this->myStrCapacity = this->myStrSize + 5;
+
+	return *this;
+}
+
+//Erase count of char at index position
+MyString MS::erase(size_t id, size_t count) {
+	if (id > this->myStrSize)
+		throw "Out of range";
+
+	//count = 
+
+	return *this;
 }
 
 int main() {
 	setlocale(LC_ALL, "ru");
-	MyString a1("Hello world!");
-	char* chr = new char;
-	std::cout << a1[12] << std::endl;
+	MyString a3 = "aaaaa";
+	string s = "@@@@@";
+	a3.insert(1, s, 2);
+	cout << a3 << endl;
+
 	return 0;
 }
