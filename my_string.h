@@ -90,6 +90,7 @@ private:
 };
 
 size_T charSize(const char String[]);
+char* strtoch(char* chString, string stroka);
 ostream& operator <<(ostream& os, MyString& MyS);
 istream& operator >>(istream& in, MyString& MyS);
 
