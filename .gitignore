@@ -10,3 +10,7 @@ MyString.sln
 /x64
 /PY
 /~$P_lab_1_task.docx
+cppyyString/__pycache__/MyString.cpython-310.pyc
+.gitignore
+SWIGpy/__pycache__/MyString.cpython-310.pyc
+SWIGpy/.vscode/settings.json
