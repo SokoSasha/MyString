@@ -1,6 +1,6 @@
 #include "my_string.h"
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//Äåëåãèðîâàíèå êîíñòðóêòîðîâ
 //Default constructor
 MS::MyString() {
 	this->myStrSize = 0;
@@ -8,7 +8,7 @@ MS::MyString() {
 	this->myString = new char[0];
 }
 
-//Init class with count characters of ï¿½char stringï¿½
+//Init class with count characters of “char string”
 MS::MyString(const char String[], size_t count) {
 	this->myStrSize = count;
 	this->myStrCapacity = this->myStrSize + 1;
@@ -232,7 +232,7 @@ ostream& operator <<(ostream& os, MyString& MyS) {
 	return os;
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//Èñïðàâèòü íà öèêë è àïïåíä
 istream& operator >>(istream& in, MyString& MyS) {
 	if (!in) MyS = MyString();
 	else {
@@ -355,7 +355,7 @@ MyString MS::append(const string stroka, const size_t idx, size_t count) {
 	return this->insert(this->myStrSize, stroka.c_str()+idx, min(stroka.size(), (size_t)count));
 }
 
-//Replace a count of char at index by ï¿½stringï¿½
+//Replace a count of char at index by “string”
 MyString MS::replace(const size_t idx, size_t count, const char String[]) {
 	this->erase(idx, count);
 	return this->insert(idx, String);
@@ -371,7 +371,7 @@ MyString MS::substr(const size_t idx) {
 	return this->substr(idx, this->myStrSize);
 }
 
-//Return a count of substringï¿½s char starts with index position
+//Return a count of substring’s char starts with index position
 MyString MS::substr(const size_t idx, size_t count) {
 	MyString sub(this->myString + idx, count);
 	return sub;
